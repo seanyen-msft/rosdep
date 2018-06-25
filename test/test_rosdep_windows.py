@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 # Author Stuart Schaefer/stuart@theschaefers.com
 
 import os
@@ -49,11 +48,11 @@ def test_choco_detect():
     assert val == [], val
     # make sure our test harness is based on the same implementation
     m.assert_called_with(['choco', 'list'])
-    assert m.call_args_list == [call(['choco, 'list'])], m.call_args_list
+    assert m.call_args_list == [call(['choco', 'list'])], m.call_args_list
 
     m = Mock()
     m.side_effect = choco_command
-    val = choco_detect((['apt', 'subversion', 'python', 'bazaar'], exec_fn=m)
+    val = choco_detect(['apt', 'subversion', 'python', 'bazaar'], exec_fn=m)
     # make sure it preserves order
     expected = ['subversion', 'bazaar']
     assert set(val) == set(expected), val

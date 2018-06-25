@@ -150,7 +150,7 @@ ERROR: Rosdep cannot find all required resources to answer your query
     except UsageError as e:
         print(_usage, file=sys.stderr)
         print('ERROR: %s' % (str(e)), file=sys.stderr)
-        sys.exit(os.EX_USAGE)
+        sys.exit(os.EX_USAGE) if os.name != 'nt' else sys.exit()
     except RosdepInternalError as e:
         print("""
 ERROR: Rosdep experienced an internal error.

@@ -18,8 +18,10 @@ from ..shell_utils import read_stdout
 NUGET_INSTALLER = 'nuget'
 CHOCO_INSTALLER = 'chocolatey'
 
+
 def register_installers(context):
     context.set_installer(CHOCO_INSTALLER, ChocolateyInstaller())
+
 
 def register_platforms(context):
     context.add_os_installer_key(OS_WINDOWS, CHOCO_INSTALLER)
@@ -27,12 +29,14 @@ def register_platforms(context):
     context.add_os_installer_key(OS_WINDOWS, SOURCE_INSTALLER)
     context.set_default_os_installer_key(OS_WINDOWS, lambda self: CHOCO_INSTALLER)
     context.set_os_version_type(OS_WINDOWS, OsDetect.get_codename)
-	
+
+
 def is_choco_installed():
     if "not-found" not in get_choco_version():
         return True
     else:
         return False
+
 
 def get_choco_version():
     try:
@@ -49,6 +53,7 @@ def get_choco_version():
             return 'Chocolatey not-found'
     except OSError:
         return 'Chocolatey not-found'
+
 
 def choco_detect(pkgs, exec_fn=None):
     """
@@ -71,12 +76,13 @@ def choco_detect(pkgs, exec_fn=None):
         if pkg_row[0] in pkgs:
             ret_list.append(pkg_row[0])
     return ret_list
-			
+
+
 class ChocolateyInstaller(PackageManagerInstaller):
 
     def __init__(self):
         super(ChocolateyInstaller, self).__init__(choco_detect, supports_depends=True)
-		
+
     def get_version_strings(self):
         version_strings = [
             get_choco_version()
