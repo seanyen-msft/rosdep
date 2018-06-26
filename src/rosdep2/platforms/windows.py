@@ -1,6 +1,7 @@
 #!/usr/bin/env python
-
+#
 # Author Stuart Schaefere/stuart@theschaefers.com
+#
 
 import subprocess
 import json
@@ -96,5 +97,14 @@ class ChocolateyInstaller(PackageManagerInstaller):
         packages = self.get_packages_to_install(resolved, reinstall=reinstall)
         if not packages:
             return []
+
+        # interactive switch doesn't matter
+        if reinstall:
+            commands = []
+            for p in packages:
+                # --force uninstalls all versions of that package
+                commands.append(['powershell', 'choco', 'uninstall', '--force', p])
+                commands.append(['powershell', 'choco', 'install', p])
+            return commands
         else:
             return [['powershell', 'choco', 'install', p] for p in packages]

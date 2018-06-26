@@ -41,6 +41,10 @@ import rosdep2.sources_list
 GITHUB_BASE_URL = 'https://raw.github.com/ros/rosdistro/master/rosdep/base.yaml'
 
 
+def samefile(file1, file2):
+    return os.stat(file1) == os.stat(file2)
+
+
 def get_test_dir():
     return os.path.abspath(os.path.join(os.path.dirname(__file__), 'sources.list.d'))
 
@@ -188,7 +192,7 @@ def test_write_cache_file():
 
     filepath = write_cache_file(tempdir, 'foo', {'data': 1}) + PICKLE_CACHE_EXT
     computed_path = os.path.join(tempdir, compute_filename_hash('foo')) + PICKLE_CACHE_EXT
-    assert os.path.samefile(filepath, computed_path)
+    assert samefile(filepath, computed_path)
     with open(filepath, 'rb') as f:
         assert {'data': 1} == pickle.loads(f.read())
 

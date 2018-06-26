@@ -64,18 +64,15 @@ def test_ChocolateyInstaller():
     from rosdep2.platforms.windows import ChocolateyInstaller
 
     @patch('rosdep2.platforms.windows.is_choco_installed')
-    @patch.object(ChocolateyInstaller, 'remove_duplicate_dependencies')
     @patch.object(ChocolateyInstaller, 'get_packages_to_install')
-    def test(mock_get_packages_to_install, mock_remove_duplicate_dependencies, mock_choco_installed):
+    def test(mock_get_packages_to_install, mock_choco_installed):
         mock_choco_installed.return_value = True
 
         installer = ChocolateyInstaller()
         mock_get_packages_to_install.return_value = []
-        mock_remove_duplicate_dependencies.return_value = mock_get_packages_to_install.return_value
-        assert [] == installer.get_install_command(make_resolutions(['fake']))
+        assert [] == installer.get_install_command(['fake'])
 
-        mock_get_packages_to_install.return_value = make_resolutions(['subversion', 'bazaar'])
-        mock_remove_duplicate_dependencies.return_value = mock_get_packages_to_install.return_value
+        mock_get_packages_to_install.return_value = ['subversion', 'bazaar']
         expected = [['powershell', 'choco', 'install', 'subversion'],
                     ['powershell', 'choco', 'install', 'bazaar']]
         # Chocolatey can be interactive
@@ -90,21 +87,6 @@ def test_ChocolateyInstaller():
         val = installer.get_install_command(['whatever'], reinstall=True)
         assert val == expected, val
 
-        mock_get_packages_to_install.return_value = make_resolutions_options(
-            [('subversion', ['foo', 'bar'], ['baz']), ('bazaar', [], ['--with-quux'])])
-        mock_remove_duplicate_dependencies.return_value = mock_get_packages_to_install.return_value
-        expected = [['powershell', 'choco', 'install', 'subversion', 'foo', 'bar', 'baz'],
-                    ['powershell', 'choco', 'install', 'bazaar', '--with-quux']]
-        val = installer.get_install_command(['whatever'])
-        assert val == expected, val
-
-        try:
-            mock_get_packages_to_install.return_value = eval("make_resolutions_options([('subversion', [u'f´´ßß', u'öäö'], []), (u'bazaar', [], [u'tüü'])])")
-        except SyntaxError:
-            # Python 3.2, u'...' is not allowed, but string literals are unicode
-            mock_get_packages_to_install.return_value = make_resolutions_options(
-                [('subversion', ['f´´ßß', 'öäö'], []), ('bazaar', [], ['tüü'])])
-        mock_remove_duplicate_dependencies.return_value = mock_get_packages_to_install.return_value
         try:
             expected = eval("[['powershell', 'choco', 'install', 'subversion', u'f´´ßß', u'öäö'], ['brew', 'install', 'bazaar', u'tüü']]")
         except SyntaxError:
