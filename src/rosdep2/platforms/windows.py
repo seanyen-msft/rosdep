@@ -103,8 +103,8 @@ class ChocolateyInstaller(PackageManagerInstaller):
             commands = []
             for p in packages:
                 # --force uninstalls all versions of that package
-                commands.append(['powershell', 'choco', 'uninstall', '--force', p])
-                commands.append(['powershell', 'choco', 'install', p])
+                commands.append(['powershell', 'choco', 'uninstall', '--force', '-y', p])
+                commands.append(['powershell', 'choco', 'install', '-y', p])
             return commands
         else:
-            return [['powershell', 'choco', 'install', p] for p in packages]
+            return [['powershell', 'choco', 'install', '-y', p] for p in packages]
