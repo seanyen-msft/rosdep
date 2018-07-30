@@ -19,6 +19,7 @@ setup(
     entry_points = {
         'console_scripts': [
             'rosdep = rosdep2.main:rosdep_main',
+            'rosdep-source = rosdep2.install:install_main',
         ]
     },
 
