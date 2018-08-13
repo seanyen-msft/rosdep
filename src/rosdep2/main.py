@@ -461,9 +461,9 @@ def _package_args_handler(command, parser, options, args):
     if command in ['install', 'check'] and options.ignore_src:
         if options.verbose:
             print('Searching ROS_PACKAGE_PATH for '
-                  'sources: ' + str(os.environ['ROS_PACKAGE_PATH'].split(':')))
+                  'sources: ' + str(os.environ['ROS_PACKAGE_PATH'].split(os.pathsep)))
         ws_pkgs = get_workspace_packages()
-        for path in os.environ['ROS_PACKAGE_PATH'].split(':'):
+        for path in os.environ['ROS_PACKAGE_PATH'].split(os.pathsep):
             path = os.path.abspath(path.strip())
             if os.path.exists(path):
                 pkgs = find_catkin_packages_in(path, options.verbose)
