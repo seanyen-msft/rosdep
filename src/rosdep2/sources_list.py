@@ -95,7 +95,6 @@ def get_sources_list_dirs(source_list_dir):
 
 def get_sources_list_dir():
     # base of where we read config files from
-    print("System Platform ", sys.platform)
     if sys.platform in ['win32']:
         etc_ros = rospkg.get_etc_ros_dir()
     else:
