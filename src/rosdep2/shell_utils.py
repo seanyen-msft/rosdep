@@ -84,12 +84,14 @@ def create_tempfile_from_string_and_execute(string_script, path=None, exec_fn=No
 
     result = 1
     try:
-        fh = tempfile.NamedTemporaryFile('w', delete=False)
+        bat = '.bat' if os.name == 'nt' else ''
+        fh = tempfile.NamedTemporaryFile('w', suffix=bat, delete=False)
         fh.write(string_script)
         fh.close()
         print('Executing script below with cwd=%s\n{{{\n%s\n}}}\n' % (path, string_script))
         try:
-            os.chmod(fh.name, stat.S_IRWXU)
+            if os.name != 'nt':
+                os.chmod(fh.name, stat.S_IRWXU)
             if exec_fn is None:
                 result = subprocess.call(fh.name, cwd=path)
             else:

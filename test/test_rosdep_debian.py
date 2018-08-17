@@ -31,6 +31,8 @@ import os
 import traceback
 from mock import Mock, patch, call
 
+sudo_command = 'sudo -H'.split() if os.name != 'nt' and os.geteuid() != 0 else []
+
 
 def get_test_dir():
     return os.path.abspath(os.path.join(os.path.dirname(__file__), 'debian'))
@@ -123,13 +125,13 @@ def test_AptInstaller():
         assert [] == installer.get_install_command(['fake'])
 
         mock_get_packages_to_install.return_value = ['a', 'b']
-        expected = [['sudo', '-H', 'apt-get', 'install', '-y', 'a'],
-                    ['sudo', '-H', 'apt-get', 'install', '-y', 'b']]
+        expected = [sudo_command + ['apt-get', 'install', '-y', 'a'],
+                    sudo_command + ['apt-get', 'install', '-y', 'b']]
         val = installer.get_install_command(['whatever'], interactive=False)
         print('VAL', val)
         assert val == expected, val
-        expected = [['sudo', '-H', 'apt-get', 'install', 'a'],
-                    ['sudo', '-H', 'apt-get', 'install', 'b']]
+        expected = [sudo_command + ['apt-get', 'install', 'a'],
+                    sudo_command + ['apt-get', 'install', 'b']]
         val = installer.get_install_command(['whatever'], interactive=True)
         assert val == expected, val
     try:

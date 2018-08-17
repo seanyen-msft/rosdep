@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # Copyright (c) 2011, Willow Garage, Inc.
 # All rights reserved.
 #
@@ -25,39 +26,36 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-# Author Ken Conley/kwc@willowgarage.com
+"""
+Script for installing rdmanifest-described resources
+"""
+
+from __future__ import print_function
 
 import os
-import traceback
-from mock import patch
+import sys
+from optparse import OptionParser
 
-sudo_command = 'sudo -H'.split() if os.name != 'nt' and os.geteuid() != 0 else []
+from rosdep2 import InstallFailed
+from rosdep2.platforms import source
 
-
-def get_test_dir():
-    # not used yet
-    return os.path.abspath(os.path.join(os.path.dirname(__file__), 'opensuse'))
+NAME='rosdep-source'
 
 
-def test_ZypperInstaller():
-    from rosdep2.platforms.opensuse import ZypperInstaller
-
-    @patch.object(ZypperInstaller, 'get_packages_to_install')
-    def test(mock_method):
-        installer = ZypperInstaller()
-        mock_method.return_value = []
-        assert [] == installer.get_install_command(['fake'])
-
-        # no interactive option with YUM
-        mock_method.return_value = ['a', 'b']
-        expected = [sudo_command + ['zypper', 'install', '-yl', 'a', 'b']]
-        val = installer.get_install_command(['whatever'], interactive=False)
-        assert val == expected, val
-        expected = [sudo_command + ['zypper', 'install', 'a', 'b']]
-        val = installer.get_install_command(['whatever'], interactive=True)
-        assert val == expected, val
+def install_main():
+    parser = OptionParser(usage="usage: %prog install <rdmanifest-url>", prog=NAME)
+    options, args = parser.parse_args()
+    if len(args) != 2:
+        parser.error("please specify one and only one rdmanifest url")
+    if args[0] != 'install':
+        parser.error("currently only support the 'install' command")
+    rdmanifest_url= args[1]
     try:
-        test()
-    except AssertionError:
-        traceback.print_exc()
-        raise
+        if os.path.isfile(rdmanifest_url):
+            source.install_from_file(rdmanifest_url)
+        else:
+            source.install_from_url(rdmanifest_url)
+    except InstallFailed as e:
+        print("ERROR: installation failed:\n%s"%e, file=sys.stderr)
+        sys.exit(1)
+

@@ -16,6 +16,13 @@ setup(
     author_email='tfoote@osrfoundation.org',
     url='http://wiki.ros.org/rosdep',
     keywords=['ROS'],
+    entry_points = {
+        'console_scripts': [
+            'rosdep = rosdep2.main:rosdep_main',
+            'rosdep-source = rosdep2.install:install_main',
+        ]
+    },
+
     classifiers=[
         'Programming Language :: Python',
         'License :: OSI Approved :: BSD License'],
