@@ -45,6 +45,54 @@ def get_test_dir():
     return os.path.abspath(os.path.join(os.path.dirname(__file__), 'sources.list.d'))
 
 
+def get_simple_script_exit_with(exitcode):
+    if os.name != 'nt':
+        return """#!/bin/bash
+exit %d
+""" % exitcode
+    else:
+        return 'exit %d' % exitcode
+
+
+def _pathname2url(pathname):
+    """
+    pathname2url shim helper for Python2\3
+    """
+    import urllib
+    if (hasattr(urllib, 'pathname2url')):
+        from urllib import pathname2url
+    else:
+        from urllib.request import pathname2url
+    return pathname2url(pathname)
+
+
+def _urljoin(base, url):
+    """
+    urljoin shim helper for Python2\3
+    """
+    import urllib
+    if (hasattr(urllib, 'parse')):
+        from urllib.parse import urljoin
+    else:
+        import urlparse
+        from urlparse import urljoin
+    return urljoin(base, url)
+
+
+def _get_file_uri(pathname):
+    """
+    return a normalized file: procotol uri by an absolute local file path
+    """
+    return _urljoin('file:', _pathname2url(pathname))
+
+
+def _samefile(file1, file2):
+    if (hasattr(os.path, 'samefile')):
+        return os.path.samefile(file1, file2)
+    else:
+        return os.path.normcase(os.path.normpath(file1)) == os.path.normcase(os.path.normpath(file2))
+
+
 def test_get_sources_list_dir():
     assert rosdep2.sources_list.get_sources_list_dir()
 
@@ -188,7 +236,7 @@ def test_write_cache_file():
 
     filepath = write_cache_file(tempdir, 'foo', {'data': 1}) + PICKLE_CACHE_EXT
     computed_path = os.path.join(tempdir, compute_filename_hash('foo')) + PICKLE_CACHE_EXT
-    assert os.path.samefile(filepath, computed_path)
+    assert _samefile(filepath, computed_path)
     with open(filepath, 'rb') as f:
         assert {'data': 1} == pickle.loads(f.read())
 
@@ -199,13 +247,9 @@ def test_update_sources_list():
         import cPickle as pickle
     except ImportError:
         import pickle
-    try:
-        from urllib.request import pathname2url
-    except ImportError:
-        from urllib import pathname2url
     sources_list_dir = get_test_dir()
     index_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'rosdistro', 'index.yaml'))
-    index_url = 'file://' + pathname2url(index_path)
+    index_url = _get_file_uri(index_path)
     os.environ['ROSDISTRO_INDEX_URL'] = index_url
     tempdir = tempfile.mkdtemp()
     # use a subdirectory of test dir to make sure rosdep creates the necessary substructure

@@ -32,6 +32,9 @@ import traceback
 from mock import Mock, patch
 
 
+sudo_command = 'sudo -H'.split() if os.name != 'nt' and os.geteuid() != 0 else []
+
+
 def get_test_dir():
     return os.path.abspath(os.path.join(os.path.dirname(__file__), 'pip'))
 
@@ -92,12 +95,12 @@ def test_PipInstaller():
 
         # no interactive option with PIP
         mock_method.return_value = ['a', 'b']
-        expected = [['sudo', '-H', 'pip', 'install', '-U', 'a'],
-                    ['sudo', '-H', 'pip', 'install', '-U', 'b']]
+        expected = [sudo_command + ['pip', 'install', '-U', 'a'],
+                    sudo_command + ['pip', 'install', '-U', 'b']]
         val = installer.get_install_command(['whatever'], interactive=False)
         assert val == expected, val
-        expected = [['sudo', '-H', 'pip', 'install', '-U', 'a'],
-                    ['sudo', '-H', 'pip', 'install', '-U', 'b']]
+        expected = [sudo_command + ['pip', 'install', '-U', 'a'],
+                    sudo_command + ['pip', 'install', '-U', 'b']]
         val = installer.get_install_command(['whatever'], interactive=True)
         assert val == expected, val
     try:

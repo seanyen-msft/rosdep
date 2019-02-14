@@ -173,6 +173,7 @@ class TestRosdepMain(unittest.TestCase):
             return result
 
         try:
+            sudo_command = 'sudo -H ' if os.name != 'nt' and os.geteuid() != 0 else ''
             mock_read_stdout.side_effect = read_stdout
             # python must have already been installed
             with fakeout() as b:
@@ -195,8 +196,8 @@ class TestRosdepMain(unittest.TestCase):
                 stdout, stderr = b
                 expected = [
                     '#[apt] Installation commands:',
-                    '  sudo -H apt-get install ros-fuerte-catkin',
-                    '  sudo -H apt-get install libboost1.40-all-dev'
+                    '  %sapt-get install ros-fuerte-catkin' % sudo_command,
+                    '  %sapt-get install libboost1.40-all-dev' % sudo_command
                 ]
                 lines = stdout.getvalue().splitlines()
                 assert set(lines) == set(expected), lines

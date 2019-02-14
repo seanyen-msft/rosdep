@@ -33,6 +33,9 @@ import traceback
 from mock import patch, Mock
 
 
+sudo_command = 'sudo -H'.split() if os.name != 'nt' and os.geteuid() != 0 else []
+
+
 def get_test_dir():
     # not used yet
     return os.path.abspath(os.path.join(os.path.dirname(__file__), 'freebsd'))
@@ -62,10 +65,10 @@ def test_PkgInstaller():
 
         # no interactive option with YUM
         mock_method.return_value = ['a', 'b']
-        expected = [['sudo', '-H', '/usr/sbin/pkg', 'install', '-y', 'a', 'b']]
+        expected = [sudo_command + ['/usr/sbin/pkg', 'install', '-y', 'a', 'b']]
         val = installer.get_install_command(['whatever'], interactive=False)
         assert val == expected, val
-        expected = [['sudo', '-H', '/usr/sbin/pkg', 'install', '-y', 'a', 'b']]
+        expected = [sudo_command + ['/usr/sbin/pkg', 'install', '-y', 'a', 'b']]
         val = installer.get_install_command(['whatever'], interactive=True)
         assert val == expected, val
     try:

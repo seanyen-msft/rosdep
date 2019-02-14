@@ -34,6 +34,9 @@ from mock import Mock, patch
 import rospkg.os_detect
 
 
+sudo_command = 'sudo -H'.split() if os.name != 'nt' and os.geteuid() != 0 else []
+
+
 def is_slackware():
     return rospkg.os_detect.Slackware().is_os()
 
@@ -96,13 +99,13 @@ def test_SbotoolsInstaller():
 
         mock_method.return_value = ['a', 'b']
 
-        expected = [['sudo', '-H', 'sboinstall', '-r', 'a'],
-                    ['sudo', '-H', 'sboinstall', '-r', 'b']]
+        expected = [sudo_command + ['sboinstall', '-r', 'a'],
+                    sudo_command + ['sboinstall', '-r', 'b']]
         val = installer.get_install_command(['whatever'], interactive=False)
         assert val == expected, val
 
-        expected = [['sudo', '-H', 'sboinstall', 'a'],
-                    ['sudo', '-H', 'sboinstall', 'b']]
+        expected = [sudo_command + ['sboinstall', 'a'],
+                    sudo_command + ['sboinstall', 'b']]
         val = installer.get_install_command(['whatever'], interactive=True)
         assert val == expected, val
 
@@ -166,13 +169,13 @@ def test_SlackpkgInstaller():
 
         mock_method.return_value = ['a', 'b']
 
-        expected = [['sudo', '-H', 'slackpkg', 'install', 'a'],
-                    ['sudo', '-H', 'slackpkg', 'install', 'b']]
+        expected = [sudo_command + ['slackpkg', 'install', 'a'],
+                    sudo_command + ['slackpkg', 'install', 'b']]
         val = installer.get_install_command(['whatever'], interactive=False)
         assert val == expected, val
 
-        expected = [['sudo', '-H', 'slackpkg', 'install', 'a'],
-                    ['sudo', '-H', 'slackpkg', 'install', 'b']]
+        expected = [sudo_command + ['slackpkg', 'install', 'a'],
+                    sudo_command + ['slackpkg', 'install', 'b']]
         val = installer.get_install_command(['whatever'], interactive=True)
         assert val == expected, val
 
