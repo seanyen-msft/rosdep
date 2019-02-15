@@ -592,14 +592,14 @@ def test_RosdepInstaller_install_resolved(mock_read_stdout):
     from rosdep2.platforms.debian import APT_INSTALLER
 
     def read_stdout(cmd, capture_stderr=False):
-            if cmd[0] == 'apt-cache' and cmd[1] == 'showpkg':
-                result = ''
-            elif cmd[0] == 'dpkg-query':
-                result = '\n'.join(["dpkg-query: no packages found matching %s" % f for f in cmd[3:]])
+        if cmd[0] == 'apt-cache' and cmd[1] == 'showpkg':
+            result = ''
+        elif cmd[0] == 'dpkg-query':
+            result = '\n'.join(["dpkg-query: no packages found matching %s" % f for f in cmd[3:]])
 
-            if capture_stderr:
-                return result, ''
-            return result
+        if capture_stderr:
+            return result, ''
+        return result
 
     mock_read_stdout.side_effect = read_stdout
     rospack, rosstack = get_test_rospkgs()
