@@ -22,10 +22,10 @@ from rospkg.os_detect import OS_WINDOWS, OsDetect
 from ..core import InstallFailed, RosdepInternalError, InvalidData
 from .pip import PIP_INSTALLER
 from .source import SOURCE_INSTALLER
+from .vcpkg import VCPKG_INSTALLER
 from ..installers import PackageManagerInstaller
 from ..shell_utils import read_stdout
 
-NUGET_INSTALLER = 'nuget'
 CHOCO_INSTALLER = 'chocolatey'
 
 
@@ -36,6 +36,7 @@ def register_installers(context):
 def register_platforms(context):
     context.add_os_installer_key(OS_WINDOWS, CHOCO_INSTALLER)
     context.add_os_installer_key(OS_WINDOWS, PIP_INSTALLER)
+    context.add_os_installer_key(OS_WINDOWS, VCPKG_INSTALLER)
     context.add_os_installer_key(OS_WINDOWS, SOURCE_INSTALLER)
     context.set_default_os_installer_key(OS_WINDOWS, lambda self: CHOCO_INSTALLER)
     context.set_os_version_type(OS_WINDOWS, OsDetect.get_codename)

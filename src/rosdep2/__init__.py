@@ -69,10 +69,11 @@ def create_default_installer_context(verbose=False):
     from .platforms import freebsd
     from .platforms import slackware
     from .platforms import source
+    from .platforms import vcpkg
     from .platforms import windows
 
     platform_mods = [alpine, arch, cygwin, debian, gentoo, openembedded, opensuse, osx, redhat, slackware, freebsd, windows]
-    installer_mods = [source, pip, gem] + platform_mods
+    installer_mods = [source, pip, gem, vcpkg] + platform_mods
 
     context = InstallerContext()
     context.set_verbose(verbose)
