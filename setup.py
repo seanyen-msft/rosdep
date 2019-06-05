@@ -11,11 +11,16 @@ setup(
     install_requires=['catkin_pkg >= 0.4.0', 'rospkg >= 1.1.8', 'rosdistro >= 0.7.0', 'PyYAML >= 3.1'],
     test_suite='nose.collector',
     test_requires=['mock', 'nose >= 1.0'],
-    scripts=['scripts/rosdep', 'scripts/rosdep-source'],
     author='Tully Foote, Ken Conley',
     author_email='tfoote@osrfoundation.org',
     url='http://wiki.ros.org/rosdep',
     keywords=['ROS'],
+    entry_points={
+        'console_scripts': [
+            'rosdep = rosdep2.main:rosdep_main',
+            'rosdep-source = rosdep2.install:install_main'
+        ]
+    },
     classifiers=[
         'Programming Language :: Python',
         'License :: OSI Approved :: BSD License'],
