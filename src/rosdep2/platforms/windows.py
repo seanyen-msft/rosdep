@@ -107,6 +107,12 @@ class ChocolateyInstaller(PackageManagerInstaller):
 
         # interactive switch doesn't matter
         if reinstall:
+            # previous we explicitly uninstall and install packages, however
+            # we noticed there are some problematic code path inside packages'
+            # uninstall scripts.
+            # so here we workaround that by only doing force upgrade, and we
+            # should revisit this after we figure out the root cause of the
+            # uninstall scripts.
             return [['choco', 'upgrade', '-f', '-y', p] for p in packages]
         else:
             return [['choco', 'upgrade', '-y', p] for p in packages]
