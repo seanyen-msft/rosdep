@@ -107,11 +107,6 @@ class ChocolateyInstaller(PackageManagerInstaller):
 
         # interactive switch doesn't matter
         if reinstall:
-            commands = []
-            for p in packages:
-                # --force uninstalls all versions of that package
-                commands.append(['choco', 'uninstall', '--force', '-y', p])
-                commands.append(['choco', 'install', '-y', p])
-            return commands
+            return [['choco', 'upgrade', '-f', '-y', p] for p in packages]
         else:
             return [['choco', 'upgrade', '-y', p] for p in packages]
