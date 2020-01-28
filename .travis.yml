@@ -18,6 +18,13 @@ matrix:
     - os: osx
       language: generic
       env: PYTHON_INSTALLER=pyenv TRAVIS_PYTHON_VERSION=3.6.4
+    - os: windows
+      language: shell
+      before_install:
+        - choco install python --version 3.6.4
+        - python --version
+        - python -m pip install --upgrade pip
+      env: PATH=/c/Python36:/c/Python36/Scripts:$PATH
 
 # command to install dependencies
 install:
