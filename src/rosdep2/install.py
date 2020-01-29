@@ -58,7 +58,3 @@ def install_main():
     except InstallFailed as e:
         print("ERROR: installation failed:\n%s"%e, file=sys.stderr)
         sys.exit(1)
-
-
-if __name__ == '__main__':
-    install_main()
