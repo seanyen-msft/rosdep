@@ -47,7 +47,7 @@ class CondaInstaller(PackageManagerInstaller):
     """
 
     def __init__(self):
-        super(CondaInstaller, self).__init__(conda_detect)
+        super(CondaInstaller, self).__init__(conda_detect, supports_depends=True)
 
     def get_version_strings(self):
         output = subprocess.check_output(['conda', '--version'])
