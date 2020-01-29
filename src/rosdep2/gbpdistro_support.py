@@ -120,6 +120,9 @@ def gbprepo_to_rosdep_data(gbpdistro_data, targets_data, url=''):
                 # - debian package name: underscores must be dashes
                 deb_package_name = 'ros-%s-%s' % (release_name, pkg)
                 deb_package_name = deb_package_name.replace('_', '-')
+                rosdep_data[pkg]['conda'] = {
+                    'conda': {'packages': [deb_package_name]}
+                }
 
                 repo_targets = repo['target'] if 'target' in repo else 'all'
                 if repo_targets == 'all':
@@ -168,6 +171,9 @@ def get_gbprepo_as_rosdep_data(gbpdistro):
             # - package name: underscores must be dashes
             package_name = 'ros-%s-%s' % (release_name, pkg)
             package_name = package_name.replace('_', '-')
+            rosdep_data[pkg]['conda'] = {
+                'conda': {'packages': [package_name]}
+            }
 
             for os_name in distro_file.platforms:
                 if os_name not in rosdep_data[pkg]:
